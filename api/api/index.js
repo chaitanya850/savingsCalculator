@@ -1,8 +1,6 @@
-require('dotenv').config();
-console.log('MONGO_URL:', process.env.MONGO_URL);
 const express = require('express');
 const cors = require('cors');
-
+require('dotenv').config();
 const Transaction = require('./models/Transaction.js');
 const mongoose = require('mongoose');
 const app = express();
@@ -19,24 +17,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// Remove authentication and user logic
+app.get('/api/test', (req, res) => {
+  res.json({ body: 'test ok3' });
+});
 
 app.post('/api/transaction', async (req, res) => {
   console.log(req.body);
   try {
     const {price, name, description, datetime } = req.body;
-    const transaction = await Transaction.create({ 
-      price,
-      name, 
-      description, 
-      datetime
-    });
+    const transaction = await Transaction.create({ price,name, description, datetime });
     res.json(transaction);
   } catch (err) {
     res.status(500).json({ error: 'Failed to save transaction', details: err });
   }
 });
-
 app.get('/api/transactions', async (req, res) => {
   try {
     const transactions = await Transaction.find();
@@ -45,7 +39,4 @@ app.get('/api/transactions', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch transactions', details: err });
   }
 });
-
-app.listen(4040, () => {
-  console.log('Server running on http://localhost:4040');
-});
+app.listen(4040);
